@@ -1,5 +1,7 @@
 /// <reference types="cypress"/>
 
+import contrato from "../contratos/produtos.contratos";
+
 let token
 
 beforeEach(() => {
@@ -9,6 +11,13 @@ beforeEach(() => {
 });
 
 describe('Funcionalidade: Produtos', () => {
+
+    it('Deve validar o contrato de produtos', () => {
+        cy.request('produtos').then(response => {
+            return contrato.validateAsync(response.body)
+        })
+    });
+
     it('Listar produtos - GET', () => {
         cy.request({
             method: 'GET',
