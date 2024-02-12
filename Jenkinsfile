@@ -1,7 +1,7 @@
-pipeline {
+main {
     agent any
 
-    stage {
+    stages {
         stage('Setup') {
             steps {
                 git branch: 'main', url: 'https://github.com/bruno-rcn/teste-ebac-api.git'
