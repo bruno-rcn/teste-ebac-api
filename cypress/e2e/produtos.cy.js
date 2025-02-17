@@ -3,7 +3,6 @@
 import contrato from "../contratos/produtos.contratos";
 
 let token
-
 beforeEach(() => {
     cy.token('fulano@qa.com', 'teste').then(tkn => {
         token = tkn
@@ -13,6 +12,7 @@ beforeEach(() => {
 describe('Funcionalidade: Produtos', () => {
 
     it('Deve validar o contrato de produtos', () => {
+       // dentro da request esse 'produtos' faz referencia a url do get
         cy.request('produtos').then(response => {
             return contrato.validateAsync(response.body)
         })
@@ -29,7 +29,7 @@ describe('Funcionalidade: Produtos', () => {
     });
 
     it('Cadastrar produtos - POST', () => {
-        let produto = 'Produto EBAC Nº ' + Math.floor(Math.random() * 100)
+        let produto = 'Produto EBAC Nº ' + Math.floor(Math.random() * 100) // poderia ter utilizado a biblioteca faker
         cy.request({
             method: 'POST',
             url: 'produtos',
@@ -47,18 +47,8 @@ describe('Funcionalidade: Produtos', () => {
     });
 
     it('Deve validar mensagem de produto ja cadastrado - POST', () => {
-        cy.request({
-            method: 'POST',
-            url: 'produtos',
-            headers: {authorization: token},
-            body: {
-                "nome": "PS5",
-                "preco": 470,
-                "descricao": "Video game",
-                "quantidade": 500
-            }, 
-            failOnStatusCode: false
-          }).should((response) => {
+      let produto = 'Produto EBAC Nº ' + Math.floor(Math.random() * 100)
+        cy.cadastrarProduto(token, produto, 400, 'Video game', 100).should((response) => {
             expect(response.body.message).to.equal("Já existe produto com esse nome")
             expect(response.status).to.equal(400)
           })
@@ -66,31 +56,44 @@ describe('Funcionalidade: Produtos', () => {
 
     it('Deve editar um produto com sucesso - PUT', () => {
         let qtd = Math.floor(Math.random() * 100)
-        cy.request({
-            method: 'PUT',
-            url: 'produtos' + '/PfULNMuDaIRTsOUM',
-            headers: {authorization: token},
-            body: {
-                "nome": "PS5 edit",
-                "preco": 470,
-                "descricao": "Video game",
-                "quantidade": qtd
-            }, 
-          }).should((response) => {
-            expect(response.body.message).to.equal("Registro alterado com sucesso")
-            expect(response.status).to.equal(200)
+        let produto = 'play ' + Math.floor(Math.random() * 10)
+        
+        cy.cadastrarProduto(token, produto, 400, 'Video game', 100)
+          .then(response => {
+            let id = response.body._id
+
+            cy.request({
+              method: 'PUT',
+              url: `produtos/${id}`,
+              headers: {authorization: token},
+              body: {
+                  "nome": produto,
+                  "preco": 470,
+                  "descricao": "Video game",
+                  "quantidade": qtd
+              }, 
+            }).should((response) => {
+              expect(response.body.message).to.equal("Registro alterado com sucesso")
+              expect(response.status).to.equal(200)
+            })
           })
     });
 
     it('Deve deletar um produto com sucesso - DELETE', () => {
-        cy.request({
+      let produto = 'produto a ser deletetado ' + Math.floor(Math.random() * 10)
+      cy.cadastrarProduto(token, produto, 400, 'Video game', 100)
+        .then(response => {
+          let id = response.body._id
+
+          cy.request({
             method: 'DELETE',
-            url: 'produtos' + '/8dgusvcb0tdDjdgk',
+            url: `produtos/${id}`,
             headers: {authorization: token},
           }).should((response) => {
             expect(response.body.message).to.equal("Registro excluído com sucesso")
             expect(response.status).to.equal(200)
           })
+      })
     });
 
 });

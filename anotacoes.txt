@@ -1,0 +1,38 @@
+
+Teste Ebac API
+--------------
+
+Fluxo de testes de API:
+- Health check - garantir que o endpoint esta respondendo
+- Contrato - garantir que o endpoint não teve seus atributos alterados
+- Aceitação - garantir que o endpoint funciona ou apresenta o resultado de falha esperado
+- Funcional - garantir que um conjunto de endpoints funcionam como na UI
+
+
+O que testar ? Possíveis testes de APIs:
+- status code
+- performance - validando o tempo da resposta
+- syntaxe - se o servidor aceita o formato da requisição (content-type)
+- tratamento de erros - como dados inválidos, campos obrigatórios
+- detecção de erros - testes negativos para identificar exceções 
+- schema - validar se o conteúdo da resposta esta de acordo com o contrato
+- funcional 
+- segurança - injeções de SQL não impactam na integridade dos dados
+
+
+- API: 
+
+pokeapi: https://pokeapi.co/
+
+serverest.dev - para utilizar de forma local rodar no terminal com o node.js instalado: npx serverest
+	vai subir a api no localhost:3000
+
+
+- Preparar o ambiente para automação
+- subir o servidor da api
+- criar a pasta do projeto
+- iniciar um projeto node: npm init -y
+- instalar o cypress: npm install cypress@13.6.0
+- abrir o cypress: npx cypress open
+- criar um novo arquivo: no caso do curso foi login
+- para os testes de contrato instalar: npm install joi
